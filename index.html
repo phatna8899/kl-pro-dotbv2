@@ -102,6 +102,34 @@
             color: #991b1b; /* Red-800 */
             font-weight: 700;
         }
+        /* Style đặc biệt cho Server Private Accordion */
+        .server-private-accordion-header {
+            background-color: #fffbeb; /* Amber-50 */
+            border-top: 2px solid #fbbf24; /* Amber-400 */
+        }
+
+/* ANIMATION CHO SERVER PRIVATE */
+        @keyframes blink-warning {
+            0% { background-color: #fffbeb; } /* Amber-50 (Màu nền khi đóng) */
+            50% { background-color: #fee2e2; } /* Red-100 (Màu đỏ đậm hơn) */
+            100% { background-color: #fffbeb; }
+        }
+        
+        .blinking-important {
+            animation: blink-warning 2s infinite;
+        }
+        /* Khi mở ra (open), tắt hiệu ứng blink để dễ đọc */
+        .accordion-content.open + .blinking-important,
+        .accordion-content.open ~ button.blinking-important { 
+            animation: none;
+            background-color: #fffbeb !important;
+        }
+
+        /* Khi Accordion đang mở, loại bỏ hiệu ứng chớp ở nút (vì nội dung đang hiển thị) */
+        .server-private-accordion-header.no-blink {
+            animation: none;
+            background-color: #fffbeb !important;
+        }
     </style>
 </head>
 <body class="p-4 sm:p-8">
@@ -358,17 +386,25 @@
     </div>
 </div>
 
-                    <!-- GIẢI PHÁP HẠ TẦNG (SERVER RIÊNG) -->
-                    <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-lg">
-                        <h4 class="font-semibold text-lg text-yellow-800 flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-600 mr-2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
-                            Giải pháp Hạ tầng: Server Riêng (<span class="dotb-highlight text-yellow-800">Custom Server</span>)
-                        </h4>
-                        <ul class="list-disc ml-6 mt-2 text-sm text-yellow-700 space-y-1">
-                            <li>Nhằm đảm bảo hiệu suất tối đa, cần chạy DotB V2 trên <span class="dotb-highlight text-yellow-800">Server Riêng</span> thay vì server Public hiện tại của DotB.</li>
-                            <li>Server Riêng sẽ đáp ứng được tác vụ gửi <span class="dotb-highlight text-yellow-800">hình ảnh/video</span> định kì ngay trên DotB và app iKAPLA, một tác vụ nặng mà Server Public khó đáp ứng ổn định.</li>
-                            <li>Chi phí cho phần này sẽ được chi tiết ở mục <span class="dotb-highlight text-yellow-800">4.2. Dự toán Chi phí</span>.</li>
-                        </ul>
+                    <!-- GIẢI PHÁP HẠ TẦNG (SERVER RIÊNG) - ĐÃ CHUYỂN THÀNH ACCORDION VÀ CÓ HIỆU ỨNG BLINKING -->
+                    <div class="mb-6 border border-yellow-500 rounded-lg overflow-hidden">
+                         <button class="flex justify-between items-center w-full p-4 text-left font-bold text-yellow-800 server-private-accordion-header blinking-important" onclick="toggleAccordion('server-private-solution')">
+                            <span><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline mr-2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="10" y1="6" x2="10.01" y2="6"></line><line x1="14" y1="6" x2="14.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line><line x1="10" y1="18" x2="10.01" y2="18"></line><line x1="14" y1="18" x2="14.01" y2="18"></line></svg>
+                            GIẢI PHÁP HẠ TẦNG: SERVER PRIVATE (QUAN TRỌNG VÀ CẦN THIẾT)</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transform transition-transform duration-300 accordion-icon"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
+                        <!-- Mặc định đóng -->
+                        <div id="server-private-solution" class="accordion-content bg-white">
+                            <ul class="list-disc ml-6 mt-2 text-gray-700 space-y-3">
+                                <li class="font-bold text-lg text-red-700">Server Private này là <span class="dotb-highlight text-red-700">cực kì cần thiết</span> để đảm bảo hiệu suất vận hành ổn định cho V2.0.</li>
+                                <li>Nhằm đảm bảo hiệu suất tối đa, cần chạy DotB V2 trên <span class="dotb-highlight text-yellow-800">Server Riêng</span> thay vì server Public hiện tại của DotB.</li>
+                                <li>**Cấu trúc Database Tối ưu:** Hệ thống được thiết lập cấu trúc <span class="dotb-highlight text-yellow-800">Master/Slave</span> và <span class="dotb-highlight text-yellow-800">Load Balancing</span>, tách biệt Web Interface và Database Server.</li>
+                                <li>**Lợi ích Hiệu suất:** Nhờ cấu trúc tối ưu, thao tác người dùng (HRT/GV) sẽ <span class="dotb-highlight text-yellow-800">mượt mà, phản hồi nhanh, hạn chế lag</span>, ngay cả khi có lượng truy cập lớn.</li>
+                                <li>**Lợi ích Phân tích Dữ liệu:** Tối ưu cho việc phân tích, chạy các báo cáo phức tạp, và cho phép mở rộng tích hợp các công cụ chuyên query/tạo dashboard/report như <span class="dotb-highlight text-yellow-800">BigQuery và PowerBI</span>.</li>
+                                <li>Server Riêng sẽ đáp ứng được tác vụ gửi <span class="dotb-highlight text-yellow-800">hình ảnh/video</span> định kì ngay trên DotB và app iKAPLA, một tác vụ nặng mà Server Public khó đáp ứng ổn định.</li>
+                                <li>Chi phí cho phần này sẽ được chi tiết ở mục <span class="dotb-highlight text-yellow-800">4.2. Dự toán Chi phí</span>.</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -643,7 +679,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
 
         <!-- NỘI DUNG TAB 4: NGUỒN LỰC & CHI PHÍ (ĐÃ GỘP) -->
@@ -793,13 +828,13 @@
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-3 font-medium text-gray-900">3. Cài đặt Source Code DOTB V2 lên Server Riêng</td>
-                                    <td class="px-6 py-3 text-center text-red-600">2 Mandays</td>
+                                    <td class="px-6 py-3 text-center text-red-600">10 Mandays</td>
                                     <td class="px-6 py-3 text-center">3.000.000</td>
-                                    <td class="px-6 py-3 text-center font-bold text-red-700">6.000.000</td>
+                                    <td class="px-6 py-3 text-center font-bold text-red-700">30.000.000</td>
                                 </tr>
                                 <tr class="cost-total-capex">
                                     <td colspan="3" class="px-6 py-3 text-right">TỔNG CHI PHÍ PHÁT TRIỂN DỰ KIẾN (A)</td>
-                                    <td class="px-6 py-3 text-center">51.000.000</td>
+                                    <td class="px-6 py-3 text-center">75.000.000</td>
                                 </tr>
 
                                 <!-- Chi phí Vận hành (OPEX) -->
@@ -814,20 +849,20 @@
                                 <tr>
                                     <td class="px-6 py-3 font-medium text-gray-900">5. DOTB charge phí Bảo trì vận hành Server Riêng</td>
                                     <td class="px-6 py-3 text-center text-blue-600">1 Tháng</td>
-                                    <td class="px-6 py-3 text-center">2.000.000</td>
-                                    <td class="px-6 py-3 text-center font-bold text-blue-700">2.000.000</td>
+                                    <td class="px-6 py-3 text-center">3.000.000</td>
+                                    <td class="px-6 py-3 text-center font-bold text-blue-700">3.000.000</td>
                                 </tr>
 
                                 <!-- Tổng cộng -->
                                 <tr class="cost-total">
                                     <td colspan="3" class="px-6 py-3 text-right">TỔNG CHI PHÍ VẬN HÀNH DỰ KIẾN (B/Tháng)</td>
-                                    <td class="px-6 py-3 text-center">22.000.000</td>
+                                    <td class="px-6 py-3 text-center">23.000.000</td>
                                 </tr>
                                 
                                 <tr class="cost-sub-header"><td colspan="4" class="px-6 py-2">C. TỔNG CỘNG</td></tr>
                                 <tr class="cost-total">
                                     <td colspan="3" class="px-6 py-3 text-right">TỔNG CHI PHÍ DỰ ÁN (A + Bx12) - Năm đầu tiên</td>
-                                    <td class="px-6 py-3 text-center text-xl">315.000.000</td>
+                                    <td class="px-6 py-3 text-center text-xl">351.000.000</td>
                                 </tr>
                                 
                             </tbody>
@@ -875,15 +910,36 @@
             
             // 4. Hiển thị sub-tab content tương ứng
             document.getElementById(subTabId).classList.remove('hidden');
+            
+            // Sau khi chuyển sub-tab, đảm bảo sub-tab-2-1 được hiển thị thì reset trạng thái accordion
+            if (subTabId === 'sub-tab-2-1') {
+                const serverAccordionContent = document.getElementById('server-private-solution');
+                const serverAccordionButton = serverAccordionContent.previousElementSibling;
+                
+                // Đảm bảo accordion server private luôn đóng khi mới chuyển sang tab 2.1
+                serverAccordionContent.classList.remove('open');
+                serverAccordionButton.querySelector('.accordion-icon').classList.remove('rotate-180');
+
+                // Đảm bảo hiệu ứng blink hoạt động khi đóng
+                serverAccordionButton.classList.remove('no-blink');
+            }
         }
 
         // Hàm chuyển đổi Accordion (Expand/Collapse)
         function toggleAccordion(id) {
             const content = document.getElementById(id);
-            const icon = content.previousElementSibling.querySelector('.accordion-icon');
+            const button = content.previousElementSibling;
+            const icon = button.querySelector('.accordion-icon');
 
             content.classList.toggle('open');
             icon.classList.toggle('rotate-180');
+            
+            // Toggle animation class based on state (chỉ blink khi đóng)
+            if (content.classList.contains('open')) {
+                button.classList.add('no-blink');
+            } else {
+                button.classList.remove('no-blink');
+            }
         }
 
         // Khởi tạo: Mặc định mở Tab 1 (và sub-tab 1.1)
@@ -894,4 +950,3 @@
     </script>
 </body>
 </html>
-
